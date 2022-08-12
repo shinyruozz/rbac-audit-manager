@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import Welcome from "../views/Welcome.vue";
 import Login from "../views/Login.vue";
 import User from "../views/User.vue";
+import Menu from "../views/Menu.vue";
 
 const routes = [{
         path: "/",
@@ -19,7 +20,7 @@ const routes = [{
 
         component: Home,
         children: [{
-                name: "/welcome",
+                name: "welcome",
                 path: "welcome",
                 meta: {
                     title: "欢迎",
@@ -27,10 +28,18 @@ const routes = [{
                 component: Welcome,
             },
             {
-                name: "/user",
+                name: "user",
                 path: "user",
                 meta: {
-                    title: "用户",
+                    title: "用户列表",
+                },
+                component: User,
+            },
+            {
+                name: "menu",
+                path: "menu",
+                meta: {
+                    title: "菜单菜单",
                 },
                 component: User,
             },

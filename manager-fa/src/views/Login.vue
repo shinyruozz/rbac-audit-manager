@@ -1,23 +1,19 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" @keyup.enter="handleSubmit">
     <div class="login-modal">
       <el-form ref="userForm" :model="loginForm" :rules="rules" status-icon>
         <h3 class="login-title">后台管理登录</h3>
         <el-form-item prop="userName">
           <el-input v-model="loginForm.userName" prefix-icon="user" placeholder="请输入用户名" />
         </el-form-item>
-        <el-form-item prop="passWord">
-          <el-input
-            type="password"
-            v-model="loginForm.passWord"
-            prefix-icon="view"
-            placeholder="请输入密码"
-          />
+        <el-form-item prop="userPwd">
+          <el-input type="password" v-model="loginForm.userPwd" prefix-icon="view" placeholder="请输入密码" />
         </el-form-item>
       </el-form>
       <el-form-item>
         <el-button type="primary" class="btn" @click="handleSubmit">登录</el-button>
       </el-form-item>
+
     </div>
   </div>
 </template>
@@ -29,8 +25,9 @@ export default {
   data() {
     return {
       loginForm: {
-        userName: "",
-        passWord: "",
+
+        userName: "dasi22",
+        userPwd: "123456",
       },
       rules: {
         userName: [
@@ -45,7 +42,7 @@ export default {
             message: "用户长度为2-10",
           },
         ],
-        passWord: [
+        userPwd: [
           {
             required: true,
             trgger: "blur",
@@ -65,9 +62,10 @@ export default {
     handleSubmit() {
       this.$refs.userForm.validate((valid) => {
         if (valid) {
-          //todu
           this.$api.login({ data: this.loginForm }).then((res) => {
-            this.$router.push("/welcome");
+            this.$router.push("/");
+            this.$message.success('登录成功')
+            this.$storage.setStorage('userInfo', res)
           });
         }
       });
@@ -79,6 +77,7 @@ export default {
 <style lang='scss' scoped>
 .login-container {
   position: relative;
+
   .login-modal {
     position: absolute;
     top: 200px;
@@ -90,10 +89,12 @@ export default {
     background-color: #f9fcff;
     box-shadow: 1px 2px 3px 5px #c7c9cb4d;
     border-radius: 5px;
+
     .login-title {
       font-size: 22px;
       padding-bottom: 20px;
     }
+
     .btn {
       width: 100%;
     }

@@ -15,6 +15,9 @@ export default {
         storage = storage[key] = value;
         window.localStorage.setItem(target, JSON.stringify(storage));
     },
+    setStorage(target, value) {
+        window.localStorage.setItem(target, JSON.stringify(value));
+    },
     delItem(target, key) {
         let storage = this.getStorage(target);
         delete storage[key];

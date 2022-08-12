@@ -18,5 +18,5 @@ const envConfig = {
 
 export default {
     ...envConfig[mode],
-    isMock: true,
+    isMock: false,
 };
