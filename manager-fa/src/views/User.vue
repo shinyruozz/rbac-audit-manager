@@ -28,7 +28,7 @@
                 <el-button type="primary" @click="handleAdd">创建</el-button>
                 <el-button type="danger" @click="batchDel">批量删除</el-button>
             </div>
-            <el-table :data="userList" ref="multipleTableRef" @selection-change="selectionChange">
+            <el-table :data="userList" @selection-change="selectionChange">
                 <el-table-column type="selection" width="55" />
                 <el-table-column v-for="item of columns" v-bind="item"></el-table-column>
                 <el-table-column label="操作" align="center">

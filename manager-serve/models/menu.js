@@ -9,10 +9,19 @@ const menuSchema = new Schema({
     },
     menuName: String, //菜单名称
     menuCode: String, // 菜单标识符，只有按钮类型才有，用于确定按钮权限
+
     path: String, // 菜单路由
     icon: String, // 菜单图标
     component: String, //组件地址
-    parentId: [Schema.Types.ObjectId], //父菜单ID
+    parentId: [{
+        type: Schema.Types.ObjectId,
+        ref: "menus",
+    }, ], //父菜单ID
+    menuState: {
+        //菜单状态 1正常 2停用
+        type: Number,
+        default: 1,
+    },
 }, { timestamps: true }, { versionKey: false });
 
 module.exports = mongoose.model("menu", menuSchema, "menus");

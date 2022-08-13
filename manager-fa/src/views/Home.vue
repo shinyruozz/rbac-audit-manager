@@ -19,7 +19,7 @@
         <!-- 头部导航 -->
         <nav-top @fold="handleFold"></nav-top>
         <div class="main-content">
-          <router-view :key="this.$route.path"></router-view>
+          <router-view :key="$route.path"></router-view>
 
         </div>
       </div>
@@ -35,7 +35,6 @@ export default {
   name: "Home",
   data() {
     return {
-      defaultActive: '',
       menuList: [],
       isFold: false, //是否折叠
     };

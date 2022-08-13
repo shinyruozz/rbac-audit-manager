@@ -41,7 +41,7 @@ const routes = [{
                 meta: {
                     title: "菜单菜单",
                 },
-                component: User,
+                component: Menu,
             },
         ],
     },

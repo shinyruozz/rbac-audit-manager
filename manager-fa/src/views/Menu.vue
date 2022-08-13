@@ -1,23 +1,18 @@
 <template>
     <div class='content-wrapper'>
         <div class="query-form">
-            <el-form :model="queryUserForm" ref="queryForm" :inline="true">
-                <el-form-item label="用户ID" prop="userId">
-                    <el-input v-model="queryUserForm.userId"></el-input>
+            <el-form :model="queryForm" ref="queryForm" :inline="true">
+                <el-form-item label="菜单名称" prop="menuName">
+                    <el-input v-model.trim="queryForm.menuName"></el-input>
                 </el-form-item>
-                <el-form-item label="用户名称" prop="userName">
-                    <el-input v-model="queryUserForm.userName"></el-input>
-                </el-form-item>
-                <el-form-item label="用户状态">
-                    <el-select v-model="queryUserForm.state">
-                        <el-option :value="0" label="全部"></el-option>
-                        <el-option :value="1" label="在职"></el-option>
-                        <el-option :value="2" label="离职"></el-option>
-                        <el-option :value="3" label="试用期"></el-option>
+                <el-form-item label="菜单状态">
+                    <el-select v-model="queryForm.menuState">
+                        <el-option :value="1" label="正常"></el-option>
+                        <el-option :value="2" label="停用"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="querySearch">查询</el-button>
+                    <el-button type="primary" @click="getMenuList">查询</el-button>
                     <el-button @click="handleReset('queryForm')">重置</el-button>
                 </el-form-item>
             </el-form>
@@ -25,60 +20,57 @@
 
         <div class="table-base">
             <div class="action">
-                <el-button type="primary" @click="handleAdd">创建</el-button>
-                <el-button type="danger" @click="batchDel">批量删除</el-button>
+                <el-button type="primary" @click="handleAdd(1, row)">新增</el-button>
             </div>
-            <el-table :data="userList" ref="multipleTableRef" @selection-change="selectionChange">
-                <el-table-column type="selection" width="55" />
+            <el-table :data="menuList" row-key="_id" :tree-props="{ children: 'children' }">
                 <el-table-column v-for="item of columns" v-bind="item"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
+                        <el-button @click="handleAdd(2, row)" type="primary" :disabled="row.menuType == 2">新增
+                        </el-button>
                         <el-button @click="handleEdit(row)">编辑</el-button>
-                        <el-button type="danger" @click=delUser([row.userId])>删除</el-button>
+                        <el-button type="danger" @click=delMenu(row._id)>删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <el-pagination :page-size="pager.pageSize" :pager-count="5" :current-page="pager.pageNum"
-                layout="prev, pager, next" :total="pager.total" background class="pagination"
-                @current-change="handleCurrentChange" />
+
         </div>
 
 
         <!-- 弹框 -->
-        <el-dialog v-model="modalShow" center :title="dialogTitle" width="45%" @close="handleReset('userForm')">
-            <el-form :model="userForm" ref="userForm" label-width="100px" :rules="userRules">
-                <el-form-item label="用户名称" prop="userName">
-                    <el-input v-model="userForm.userName" placeholder="用户名称" :disabled="action == 'edit'"></el-input>
+        <el-dialog v-model="modalShow" center :title="dialogTitle" width="45%" @close="handleReset('dialogForm')">
+            <el-form :model="menuForm" ref="dialogForm" label-width="100px" :rules='rules'>
+                <el-form-item label="菜单名称" prop="menuName">
+                    <el-input v-model="menuForm.menuName" placeholder="菜单名称"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="userPwd" v-if="action == 'add'">
-                    <el-input v-model="userForm.userPwd" type="password" placeholder="密码"></el-input>
-                </el-form-item>
-                <el-form-item label="用户邮箱" prop="userEmail">
-                    <el-input v-model="userForm.userEmail" placeholder="用户邮箱"></el-input>
-                </el-form-item>
-                <el-form-item label="手机号" prop="mobile">
-                    <el-input v-model="userForm.mobile" placeholder="手机号"></el-input>
-                </el-form-item>
-                <el-form-item label="岗位" prop="job">
-                    <el-input v-model="userForm.job" placeholder="岗位"></el-input>
-                </el-form-item>
-                <el-form-item label="状态" prop="state">
-                    <el-select v-model="userForm.state">
-                        <el-option label="在职" :value="1"></el-option>
-                        <el-option label="离职" :value="2"></el-option>
-                        <el-option label="试用期" :value="3"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="系统角色" prop="roleList">
-                    <el-select v-model="userForm.roleList" multiple>
-                        <el-option :label="role.roleName" :value="role._id" v-for="role of roleList" :key="role._id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="所属部门" prop="deptId">
-                    <el-cascader v-model="userForm.deptId" placeholder="请选择所属部门" :options="deptList"
-                        :props="{ checkStrictly: true, value: '_id', label: 'deptName' }" clearable style="width: 100%">
+                <el-form-item label="父级菜单" prop="parentId">
+                    <el-cascader v-model="menuForm.parentId" :options="menuList"
+                        :props="{ checkStrictly: true, value: '_id', label: 'menuName' }" clearable style="width: 100%">
                     </el-cascader>
+                </el-form-item>
+                <el-form-item label="菜单类型" prop="menuType">
+                    <el-radio-group v-model="menuForm.menuType">
+                        <el-radio :label="1">菜单</el-radio>
+                        <el-radio :label="2">按钮</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="菜单标识" prop="menuCode" v-if="menuForm.menuType == 2">
+                    <el-input v-model="menuForm.menuCode" placeholder="菜单标识"></el-input>
+                </el-form-item>
+                <el-form-item label="菜单路径" prop="path" v-if="menuForm.menuType == 1">
+                    <el-input v-model="menuForm.path" placeholder="菜单路径"></el-input>
+                </el-form-item>
+                <el-form-item label="菜单图标" prop="icon" v-if="menuForm.menuType == 1">
+                    <el-input v-model="menuForm.icon" placeholder="菜单图标"></el-input>
+                </el-form-item>
+                <el-form-item label="组件地址" prop="component" v-if="menuForm.menuType == 1">
+                    <el-input v-model="menuForm.component" placeholder="组件地址"></el-input>
+                </el-form-item>
+                <el-form-item label="菜单状态" prop="menuState">
+                    <el-radio-group v-model="menuForm.menuState">
+                        <el-radio :label="1">正常</el-radio>
+                        <el-radio :label="2">停用</el-radio>
+                    </el-radio-group>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -102,129 +94,67 @@ export default {
         return {
             modalShow: false,
             action: '',
-            queryUserForm: {  //用户查询表单
-                state: 0
+            queryForm: {  //用户查询表单
+                menuState: 1 // 
             },
-            userForm: {
-                state: 3
+            menuForm: {
+                menuType: 1,
+                menuState: 1
             },
-            userRules: { //校验规则
-                userName: [
-                    {
-                        required: true,
-                        trigger: 'blur',
-                        message: '请填写用户名'
-                    },
+            rules: { //校验规则
 
-                ],
-                userPwd: [
-                    {
-                        required: true,
-                        trigger: 'blur',
-                        message: '请填写密码'
-                    },
-                    {
-                        min: 6,
-                        max: 18,
-                        message: '密码长度在6-18'
-                    }
-                ],
-                userEmail: [{
-
-                    required: true,
-                    trigger: 'blur',
-                    message: '请填写邮箱'
-                }
-                ],
-                mobile: [
-                    {
-                        required: true,
-                        trigger: 'blur',
-                        message: '请填写手机号'
-                    }
-                ],
-                job: [
-                    {
-                        required: true,
-                        trigger: 'blur',
-                        message: '请填写岗位'
-                    }
-                ]
             },
-            userList: [],// 用户列表数据
-            deptList: [], //部门列表
-            //分页
-            pager: {
-                pageSize: 10,
-                pageNum: 1,
-                total: 0,
-            },
-            roleList: [],//角色数据
-            checkUserId: [], //选中的id
-
+            menuList: [], //菜单列表
             columns: [
                 {
-                    label: '用户ID',
-                    property: "userId",
-                    width: '130',
+                    label: '菜单名称',
+                    property: "menuName",
                     align: 'center'
                 },
                 {
-                    label: '用户名称',
-                    property: "userName",
-                    width: '150',
-                    align: 'center'
-                },
-                {
-                    label: '用户邮箱',
-                    property: "userEmail",
-                    width: '250',
-                    align: 'center'
-                },
-                {
-                    label: '手机号',
-                    property: "mobile",
-                    width: '200',
-                    align: 'center'
-                },
-                {
-                    label: '状态',
-                    property: "state",
-                    width: '150',
+                    label: '权限标识',
+                    property: "menuCode",
                     align: 'center',
+                    width: "100"
+                },
+                {
+                    label: '菜单路由',
+                    property: "path",
+                    align: 'center'
+                },
+                {
+                    label: '菜单图标',
+                    property: "icon",
+                    align: 'center'
+                },
+                {
+                    label: '菜单类型',
+                    property: "menuType",
+                    align: "center",
                     formatter(row, column, value) {
                         return {
-                            1: '在职',
-                            2: '离职',
-                            3: '试用期'
+                            1: '菜单',
+                            2: '按钮'
                         }[value]
                     }
                 },
                 {
-                    label: '用户角色',
-                    property: "role",
-                    width: '200',
-                    align: 'center',
-                    formatter(row, column, value) {
-                        return {
-                            0: '管理员',
-                            1: '普通用户'
-                        }[value]
-                    }
-                },
-                {
-                    label: "岗位",
-                    property: 'job',
-                    width: '200',
+                    label: '组件地址',
+                    property: "component",
                     align: 'center'
                 },
+
                 {
-                    label: '创建时间',
-                    property: 'createdAt',
-                    align: 'center',
+                    label: "菜单状态",
+                    prop: "menuState",
+                    width: 100,
+                    align: "center",
                     formatter(row, column, value) {
-                        return tools.dateFormat(value)
-                    }
+                        return {
+                            1: "正常",
+                            2: "停用",
+                        }[value];
+                    },
                 },
 
             ]
@@ -232,117 +162,74 @@ export default {
     },
     computed: {
         dialogTitle() {
-            return this.action == 'add' ? '创建用户' : '编辑用户'
+            return this.action == 'add' ? '创建菜单' : '编辑菜单'
         }
     },
     mounted() {
-        this.getUsersList();
-        this.getRolesList();
-        this.getDeptList()
+        this.getMenuList()
     },
     methods: {
         // 表单重置
         handleReset(form) {
             this.$refs[form].resetFields();
         },
-        // 创建用户
-        handleAdd() {
+        // 创建菜单
+        handleAdd(level, row) {
             this.action = 'add';
             this.modalShow = true;
+            //不是一级菜单
+            if (level == 2) {
+                this.menuForm.parentId = [...row.parentId, row._id]
+            }
         },
-        //编辑用户
+        //编辑菜单
         handleEdit(row) {
             this.action = 'edit';
             this.modalShow = true;
             this.$nextTick(() => {
-                Object.assign(this.userForm, row);
+                Object.assign(this.menuForm, row);
             });
         },
-        // 删除用户
-        delUser(userIds) {
-            console.log(userIds);
+        delMenu(_id) {
             this.$confirm('您确定要删除吗？', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning',
-            }).then(async (res) => {
-                await this.$api.delUsers({ userIds });
-                this.$message.success('删除成功')
-            })
+            }).then(async res => {
+                await this.$api.operateMenu({
+                    action: 'delete',
+                    _id
+                })
 
-            // this.$api.delUsers([userId])
-        },
-        // 搜索
-        querySearch() {
-            // const  state = this.queryUserForm.state;
-            this.pager.pageNum = 1;
-            this.getUsersList()
-        },
-        // 批量删除
-        batchDel() {
-            this.checkUserId.length && this.delUser(this.checkUserId)
+                this.$message.success('删除成功');
+                this.getMenuList()
+            })
         },
         // 关闭对话框
         handleClose() {
             this.modalShow = false;
-            this.handleReset('userForm')
+            this.handleReset('dialogForm')
         },
         // 提交表单
         handleSubmit() {
-            this.$refs.userForm.validate(async (valid) => {
+            this.$refs.dialogForm.validate(async (valid) => {
                 if (valid) {
-                    const res = await this.$api.userSubmit({
-                        ...this.userForm,
+                    const res = await this.$api.operateMenu({
+                        ...this.menuForm,
                         action: this.action
                     });
                     this.$message.success(`${this.action == 'add' ? '新增' : '修改'}成功`);
                     this.modalShow = false;
-                    this.getUsersList()
+                    this.getMenuList()
                 }
             })
         },
-        // 页码改变
-        handleCurrentChange(pageNum) {
-            this.pager.pageNum = pageNum;
-            this.getUsersList()
+        //获取菜单列表
+        async getMenuList() {
+            const list = await this.$api.getMenuList(this.queryForm);
+            console.log(list);
+            this.menuList = list
         },
-        //批量选择
-        selectionChange(vals) {
-            this.checkUserId = vals.map(item => {
-                return item.userId
-            })
-        },
-        // 获取用户列表
-        async getUsersList() {
-            try {
-                const { queryUserForm, pager } = this;
-                const params = { ...queryUserForm, ...pager };
-                const { list, page } = await this.$api.getUsersList(params);
-                this.pager = page
-
-                this.userList = list
-            } catch (e) {
-                console.log(e);
-            }
-        },
-
-
-
-        async getUsersAllList() {
-            const list = await this.$api.getUsersAllList();
-            this.userList = list
-        },
-
-        async getRolesList() {
-            const res = await this.$api.getAllRolesList();
-            this.roleList = res;
-        },
-
-        async getDeptList() {
-            const res = await this.$api.getDeptList();
-            this.deptList = res;
-        }
-
     },
 }
 </script>

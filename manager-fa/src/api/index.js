@@ -15,9 +15,18 @@ export default {
             url: "/menu/list",
             method: "post",
             data,
-            isMock: true,
+            isMock: false,
         });
     },
+
+    operateMenu(data) {
+        return request({
+            url: "/menu/operate",
+            method: "post",
+            data,
+        });
+    },
+
     getUsersList(data) {
         return request({
             url: "/users/list",
@@ -68,6 +77,4 @@ export default {
             isMock: true,
         });
     },
-
-    //获取
 };

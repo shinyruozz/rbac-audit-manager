@@ -30,7 +30,7 @@ app.use(
 
 // logger 日志
 app.use(async(ctx, next) => {
-    // log4js.info("get params:" + ctx.request.query);
+    log4js.info("get params:" + JSON.stringify(ctx.request.query));
     log4js.info("post params:" + JSON.stringify(ctx.request.body));
     await next().catch((err) => {
         if (err.status == "401") {}
