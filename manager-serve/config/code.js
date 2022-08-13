@@ -16,6 +16,10 @@ module.exports = {
         VERITY_PARMS_ERR: 10301, //参数信息错误
         OPERATE_ERR: 10306, //操作失败
     },
+    DEPT: {
+        VERITY_PARMS_ERR: 10401, //参数信息错误
+        OPERATE_ERR: 10406, //操作失败
+    },
     TOKEN_ERR: 50001,
     PARAMS_LACK: 40001, //缺少参数
 };

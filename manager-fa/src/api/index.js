@@ -95,7 +95,6 @@ export default {
     },
 
     operateRole(data) {
-        // 删除用户
         return request({
             url: "/roles/operate",
             method: "post",
@@ -105,11 +104,19 @@ export default {
     },
 
     //获取部门列表
-    getDeptList(params) {
+    getDeptList(data) {
         return request({
             url: "/dept/list",
-            params,
-            isMock: true,
+            data,
+            isMock: false,
+        });
+    },
+    operateDept(data) {
+        return request({
+            url: "/dept/operate",
+            method: "post",
+            data,
+            isMock: false,
         });
     },
 };

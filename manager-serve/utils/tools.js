@@ -36,7 +36,7 @@ function getTreeMenu(data, list, _id) {
     let arr = list || [];
 
     for (let i = 0; i < data.length; i++) {
-        let item = data[i]._doc;
+        let item = data[i]._doc ? data[i]._doc : data[i];
         //为最外层父级菜单
         if (!_id) {
             if (item.parentId && item.parentId.length == 0) {

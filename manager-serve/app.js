@@ -6,6 +6,9 @@ const onerror = require("koa-onerror");
 const bodyparser = require("koa-bodyparser");
 const logger = require("koa-logger");
 const log4js = require("./utils/log4js");
+const koajwt = require("koa-jwt");
+const config = require("./config/index");
+const CODE = require("./config/code");
 
 require("./utils/db.js")(); // 链接数据库
 
@@ -33,9 +36,23 @@ app.use(async(ctx, next) => {
     log4js.info("get params:" + JSON.stringify(ctx.request.query));
     log4js.info("post params:" + JSON.stringify(ctx.request.body));
     await next().catch((err) => {
-        if (err.status == "401") {}
+        //token认证失败
+        if (err.status == "401") {
+            console.log(err);
+            ctx.status = 200;
+            ctx.body = {
+                code: CODE.TOKEN_ERR,
+                msg: "token认证失败",
+                data: "",
+            };
+        }
     });
 });
+app.use(
+    koajwt({ secret: config.secret_key }).unless({
+        path: [/^\/users\/login/],
+    })
+);
 
 // routes
 require("./routes/index")(app);

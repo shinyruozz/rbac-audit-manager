@@ -16,7 +16,6 @@ class Menu {
         }
 
         let res = await MenuModel.find(params);
-
         let treeMenu = tools.getTreeMenu(res, []);
         ctx.body = tools.success(treeMenu);
     }

@@ -46,7 +46,6 @@ class User {
             //注册
             if (action == "add") {
                 const { userName, userPwd } = ctx.request.body;
-                console.log(ctx.request.body);
                 // 参数校验
                 if (!userName || !userPwd) {
                     return (ctx.body = tools.fail(CODE.PARAMS_LACK, "缺少参数"));
@@ -62,6 +61,7 @@ class User {
                     ctx.body = tools.fail(CODE.USER.VERITY_USER_EXIST, "该用户已存在");
                     return;
                 }
+                params.userPwd = tools.encryptionPwd(params.userPwd);
                 //每次id自增长
                 const { sequence_value: userId } = await CounterModel.findOneAndUpdate({ sequence_name: "_id" }, { $inc: { sequence_value: 1 } }, { new: true });
                 const res = await UserModel.create({
@@ -94,12 +94,10 @@ class User {
     //删除用户/批量删除
     async delete(ctx) {
         const userIds = ctx.request.body.userIds;
-        const res = await UserModel.updateMany({
+        const res = await UserModel.deleteMany({
             userId: { $in: userIds },
-        }, { state: 2 });
-        if (res) {
-            ctx.body = tools.success({}, "删除成功");
-        }
+        });
+        ctx.body = tools.success({}, "删除成功");
     }
 
     // 返回全部用户
@@ -117,7 +115,9 @@ class User {
         if (params.userName) params.userName = new RegExp(params.userName, "i");
         const { skip, pager } = tools.pager({ pageNum, pageSize });
         const query = UserModel.find(params, { __v: 0 }).sort({ createdAt: 1 });
+
         const res = await query.skip(skip).limit(pageSize);
+
         pager.total = await UserModel.countDocuments();
         ctx.body = tools.success({
             page: pager,

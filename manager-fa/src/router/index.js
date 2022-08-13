@@ -6,6 +6,8 @@ import User from "../views/User.vue";
 import Menu from "../views/Menu.vue";
 import Role from "../views/Role.vue";
 import Dept from "../views/Dept.vue";
+import Leave from "../views/Leave.vue";
+import Approve from "../views/Approve.vue";
 
 const routes = [{
         path: "/",
@@ -60,6 +62,31 @@ const routes = [{
                     title: "部门列表",
                 },
                 component: Dept,
+            },
+        ],
+    },
+    {
+        name: "audit",
+        path: "/audit",
+        component: Home,
+        mate: {
+            title: "首页",
+        },
+        children: [{
+                name: "leave",
+                path: "leave",
+                meta: {
+                    title: "休假审批",
+                },
+                component: Leave,
+            },
+            {
+                name: "approve",
+                path: "approve",
+                meta: {
+                    title: "待我审批",
+                },
+                component: Approve,
             },
         ],
     },

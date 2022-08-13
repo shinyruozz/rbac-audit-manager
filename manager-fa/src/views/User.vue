@@ -103,7 +103,7 @@ export default {
             modalShow: false,
             action: '',
             queryUserForm: {  //用户查询表单
-                state: 0
+                state: 1
             },
             userForm: {
                 state: 3
@@ -266,7 +266,8 @@ export default {
                 type: 'warning',
             }).then(async (res) => {
                 await this.$api.delUsers({ userIds });
-                this.$message.success('删除成功')
+                this.$message.success('删除成功');
+                this.getUsersList()
             })
 
             // this.$api.delUsers([userId])
