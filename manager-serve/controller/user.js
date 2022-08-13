@@ -12,11 +12,9 @@ const CounterModel = require("../models/counter");
 class User {
     async login(ctx) {
             try {
-                console.log(123456);
                 const { userName, userPwd } = ctx.request.body;
                 //用户名查找该用户是否存在
                 const res = await UserModel.findOne({ userName }).select("+userPwd");
-                console.log(res);
                 if (!res) {
                     return (ctx.body = tools.fail(CODE.USER.VERITY_USER, "不存在该用户"));
                 }
@@ -45,7 +43,6 @@ class User {
     async operate(ctx) {
         try {
             const { action, _id, ...params } = ctx.request.body;
-            console.log(ctx.request.body);
             //注册
             if (action == "add") {
                 const { userName, userPwd } = ctx.request.body;
@@ -97,11 +94,9 @@ class User {
     //删除用户/批量删除
     async delete(ctx) {
         const userIds = ctx.request.body.userIds;
-        console.log(userIds);
         const res = await UserModel.updateMany({
             userId: { $in: userIds },
         }, { state: 2 });
-        console.log(res);
         if (res) {
             ctx.body = tools.success({}, "删除成功");
         }
@@ -109,8 +104,8 @@ class User {
 
     // 返回全部用户
     async allList(ctx) {
-        const res = await UserModel.find();
-        ctx.body = tools.success(res, "获取角色列表成功");
+        const res = await UserModel.find().select(["userId", "userName"]);
+        ctx.body = tools.success(res, "获取用户列表成功");
     }
 
     async userList(ctx) {

@@ -43,6 +43,12 @@ class Menu {
 
         ctx.body = tools.success(res, info);
     }
+
+    //返回菜单列表 不做树形结构
+    async allList(ctx) {
+        const res = await MenuModel.find().select(["_id", "menuName", "parentId"]);
+        ctx.body = tools.success(res);
+    }
 }
 
 module.exports = new Menu();

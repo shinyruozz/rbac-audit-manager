@@ -4,6 +4,8 @@ import Welcome from "../views/Welcome.vue";
 import Login from "../views/Login.vue";
 import User from "../views/User.vue";
 import Menu from "../views/Menu.vue";
+import Role from "../views/Role.vue";
+import Dept from "../views/Dept.vue";
 
 const routes = [{
         path: "/",
@@ -39,9 +41,25 @@ const routes = [{
                 name: "menu",
                 path: "menu",
                 meta: {
-                    title: "菜单菜单",
+                    title: "菜单列表",
                 },
                 component: Menu,
+            },
+            {
+                name: "role",
+                path: "role",
+                meta: {
+                    title: "角色列表",
+                },
+                component: Role,
+            },
+            {
+                name: "dept",
+                path: "dept",
+                meta: {
+                    title: "部门列表",
+                },
+                component: Dept,
             },
         ],
     },

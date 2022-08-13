@@ -260,7 +260,6 @@ export default {
         },
         // 删除用户
         delUser(userIds) {
-            console.log(userIds);
             this.$confirm('您确定要删除吗？', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -334,7 +333,7 @@ export default {
         },
 
         async getRolesList() {
-            const res = await this.$api.getAllRolesList();
+            const res = await this.$api.getRoleAllList();
             this.roleList = res;
         },
 

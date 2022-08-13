@@ -1,6 +1,7 @@
 import request from "../utils/request";
 
 export default {
+    // 登录
     login(opt) {
         return request({
             url: "/users/login",
@@ -9,7 +10,7 @@ export default {
             data: opt.data,
         });
     },
-
+    // 获取菜单列表
     getMenuList(data) {
         return request({
             url: "/menu/list",
@@ -18,7 +19,14 @@ export default {
             isMock: false,
         });
     },
-
+    //获取所有菜单
+    getAllMenuList() {
+        return request({
+            url: "/menu/allList",
+            isMock: false,
+        });
+    },
+    // 菜单操作
     operateMenu(data) {
         return request({
             url: "/menu/operate",
@@ -26,7 +34,7 @@ export default {
             data,
         });
     },
-
+    // 用户列表
     getUsersList(data) {
         return request({
             url: "/users/list",
@@ -35,12 +43,14 @@ export default {
             isMock: false,
         });
     },
+    // 所有用户
     getUserAllList() {
         return request({
             url: "/users/all/list",
             isMock: false,
         });
     },
+    //用户提交
     userSubmit(data) {
         return request({
             url: "/users/operate",
@@ -49,6 +59,7 @@ export default {
             isMock: false,
         });
     },
+    // 删除用户
     delUsers(data) {
         // 删除用户
         return request({
@@ -59,13 +70,37 @@ export default {
         });
     },
 
-    //获取所有角色数列表
-    getAllRolesList(params) {
-        // 删除用户
+    getRoleList(data) {
+        return request({
+            url: "/roles/list",
+            data,
+            isMock: false,
+        });
+    },
+
+    getRoleAllList() {
         return request({
             url: "/roles/allList",
-            params,
-            isMock: true,
+            isMock: false,
+        });
+    },
+    //编辑用户权限
+    roleEditPermission(data) {
+        return request({
+            url: "/roles/update/permission",
+            method: "post",
+            data,
+            isMock: false,
+        });
+    },
+
+    operateRole(data) {
+        // 删除用户
+        return request({
+            url: "/roles/operate",
+            method: "post",
+            data,
+            isMock: false,
         });
     },
 

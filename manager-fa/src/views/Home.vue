@@ -41,7 +41,6 @@ export default {
   },
   computed: {
     defaultActive() {
-      console.log(this.$route.path);
       return this.$route.path;
     }
   },

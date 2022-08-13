@@ -227,7 +227,6 @@ export default {
         //获取菜单列表
         async getMenuList() {
             const list = await this.$api.getMenuList(this.queryForm);
-            console.log(list);
             this.menuList = list
         },
     },

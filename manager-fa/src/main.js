@@ -10,8 +10,6 @@ import storage from "./utils/storage";
 import "./assets/styles/index.scss";
 
 import "./config/index.js";
-console.log(
-    import.meta.env);
 
 const app = createApp(App).use(router).use(store).use(ElementPlus);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

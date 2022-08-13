@@ -26,4 +26,40 @@ export default {
 
         return fmt;
     },
+    /**
+     *
+     * @param {Array} data menu数据
+     * @param {Array} list 递归赋值数组
+     * @param {String} _id  //查询的id
+     * @returns
+     */
+    setMenuTree(data, list, _id) {
+        let arr = list || [];
+
+        data.map((item) => {
+            let pid = item.parentId;
+
+            if (!_id) {
+                //没有父级菜单
+                if (pid && pid.length <= 0) {
+                    arr.push(item);
+                }
+            } else {
+                if (pid.length > 0 && String(pid.slice().pop()) == String(_id)) {
+                    arr.push(item);
+                }
+            }
+        });
+
+        arr.map((item) => {
+            item.children = [];
+            //递归判断是否有子项菜单
+            this.setMenuTree(data, item.children, item._id);
+            if (item.children.length <= 0) {
+                delete item.children;
+            }
+        });
+
+        return arr;
+    },
 };

@@ -12,6 +12,10 @@ module.exports = {
     MENU: {
         VERITY_PARMS_ERR: 10201, //参数错误
     },
+    ROLE: {
+        VERITY_PARMS_ERR: 10301, //参数信息错误
+        OPERATE_ERR: 10306, //操作失败
+    },
     TOKEN_ERR: 50001,
     PARAMS_LACK: 40001, //缺少参数
 };

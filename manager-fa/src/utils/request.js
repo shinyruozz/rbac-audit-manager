@@ -31,8 +31,8 @@ http.interceptors.response.use((res) => {
         }, 1000);
         return Promise.reject(CODE_INFO.TOKEN_ERR);
     } else {
-        ElMessage.error(msg || CODE_INFO.NETWORK_ERROR);
-        return Promise.reject(msg || CODE_INFO.NETWORK_ERROR);
+        ElMessage.error(msg || CODE_INFO.NETWORK_ERR);
+        return Promise.reject(msg || CODE_INFO.NETWORK_ERR);
     }
 });
 
