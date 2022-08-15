@@ -20,7 +20,6 @@
         <nav-top @fold="handleFold"></nav-top>
         <div class="main-content">
           <router-view :key="$route.path"></router-view>
-
         </div>
       </div>
     </div>
@@ -29,7 +28,6 @@
 
 <script>
 import MenuTree from '../components/MenuTree/index.vue'
-import Navtop from '../components/NavTop/index.vue';
 import NavTop from '../components/NavTop/index.vue';
 export default {
   name: "Home",
@@ -37,6 +35,7 @@ export default {
     return {
       menuList: [],
       isFold: false, //是否折叠
+      menuList: this.$store.state.menuList
     };
   },
   computed: {
@@ -47,20 +46,26 @@ export default {
 
   components: {
     MenuTree,
-    Navtop,
     NavTop
   },
   mounted() {
-    this.getMenuList();
+    this.getAuditCount()
+
   },
   methods: {
+    //获取登录进来用户对应的权限列表 // 管理员默认 全部 普通用户根据分配的角色 获得对应的权限
     async getMenuList() {
-      const menuList = await this.$api.getMenuList();
+      const { menuList, action } = await this.$api.getUserPermission();
       this.menuList = menuList;
     },
     handleFold() {
       this.isFold = !this.isFold
       console.log(this.isFold);
+    },
+    //获取当前账号需要审批的数量
+    async getAuditCount() {
+      const count = await this.$api.auditCount();
+      this.$store.commit('saveAuditCount', count)
     }
   },
 };

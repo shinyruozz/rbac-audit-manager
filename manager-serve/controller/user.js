@@ -4,6 +4,9 @@ const config = require("../config/index");
 const UserModel = require("../models/user");
 const jsonwebtoken = require("jsonwebtoken");
 const CounterModel = require("../models/counter");
+const MenuModel = require("../models/menu");
+const RoleModel = require("../models/role");
+const mongoose = require("mongoose");
 //  set(val) {
 //             console.log(res);
 //             return res.sequence_value;
@@ -107,22 +110,98 @@ class User {
     }
 
     async userList(ctx) {
-        let { pageNum, pageSize, state, ...params } = ctx.request.body;
-        if (state) {
-            params.state = state;
+            let { pageNum, pageSize, state, ...params } = ctx.request.body;
+            if (state) {
+                params.state = state;
+            }
+            //用户名模糊查询
+            if (params.userName) params.userName = new RegExp(params.userName, "i");
+            const { skip, pager } = tools.pager({ pageNum, pageSize });
+            const query = UserModel.find(params, { __v: 0 }).sort({ createdAt: 1 });
+
+            const res = await query.skip(skip).limit(pageSize);
+
+            pager.total = await UserModel.countDocuments();
+            ctx.body = tools.success({
+                page: pager,
+                list: res,
+            });
         }
-        //用户名模糊查询
-        if (params.userName) params.userName = new RegExp(params.userName, "i");
-        const { skip, pager } = tools.pager({ pageNum, pageSize });
-        const query = UserModel.find(params, { __v: 0 }).sort({ createdAt: 1 });
-
-        const res = await query.skip(skip).limit(pageSize);
-
-        pager.total = await UserModel.countDocuments();
-        ctx.body = tools.success({
-            page: pager,
-            list: res,
-        });
+        //获取用户所属的权限列表
+    async permission(ctx) {
+        try {
+            let { roleList, _id, role } = tools.decryptAuth(ctx.request.headers.authorization);
+            let res, info, menuList, action;
+            if (role == 0) {
+                //用户是管理员
+                menuList = await MenuModel.find();
+                menuList = tools.getTreeMenu(menuList.slice());
+                console.log(menuList);
+                action = tools.getAction(JSON.parse(JSON.stringify(menuList)));
+            } else {
+                // 普通用户
+                roleList = roleList.map((item) => {
+                    //要转化 mongoose.Types.ObjectId 类型不让查询不到
+                    return new mongoose.Types.ObjectId(item);
+                });
+                res = await RoleModel.aggregate([{
+                        $match: { _id: { $in: roleList } },
+                    },
+                    {
+                        $lookup: {
+                            from: "menus",
+                            localField: "permissionList.checkedKeys",
+                            foreignField: "_id",
+                            as: "checkedKeys",
+                        },
+                    },
+                    {
+                        $lookup: {
+                            from: "menus",
+                            localField: "permissionList.halfCheckedKeys",
+                            foreignField: "_id",
+                            as: "halfCheckedKeys",
+                        },
+                    },
+                    {
+                        $project: {
+                            menuList: { $setUnion: ["$halfCheckedKeys", "$checkedKeys"] }, //合并一起
+                            action: "$checkedKeys",
+                        },
+                    },
+                ]);
+                // 合并  默认是[{_id:[menuList....]}....]  合并成 [ {menuItem},{menuItem}]
+                menuList = res.reduce((pre, cur, index) => {
+                    return pre.concat(cur.menuList);
+                }, []);
+                action = res.reduce((pre, cur, index) => {
+                    return pre.concat(cur.action);
+                }, []);
+                // 去重 不同角色可能有菜单一样的情况
+                menuList = menuList.filter((menuItem, index, arr) => {
+                    let cuIdx = arr.findIndex((item) => {
+                        return String(menuItem._id) == String(item._id);
+                    });
+                    return cuIdx == index;
+                });
+                menuList = tools.getTreeMenu(menuList);
+                action = action.filter((menuItem, index, arr) => {
+                    let cuIdx = arr.findIndex((item) => {
+                        return String(menuItem._id) == String(item._id);
+                    });
+                    return cuIdx == index;
+                });
+            }
+            info = "获取菜单列表成功";
+            ctx.body = tools.success({
+                    menuList,
+                    action,
+                },
+                info
+            );
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

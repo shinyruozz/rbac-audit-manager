@@ -59,6 +59,13 @@ export default {
             isMock: false,
         });
     },
+    getUserPermission(data) {
+        return request({
+            url: "/users/permission",
+            isMock: false,
+            data: data,
+        });
+    },
     // 删除用户
     delUsers(data) {
         // 删除用户
@@ -117,6 +124,30 @@ export default {
             method: "post",
             data,
             isMock: false,
+        });
+    },
+
+    //审批列表
+    getLeaveList(data) {
+        return request({
+            url: "/leave/list",
+            data,
+            isMock: false,
+        });
+    },
+    //审批操作
+    operateLeave(data) {
+        return request({
+            url: "/leave/operate",
+            method: "post",
+            data,
+        });
+    },
+    //当前要审核的数量
+    auditCount(data) {
+        return request({
+            url: "/leave/count",
+            data,
         });
     },
 };

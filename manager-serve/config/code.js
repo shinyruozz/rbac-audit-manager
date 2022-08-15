@@ -20,6 +20,9 @@ module.exports = {
         VERITY_PARMS_ERR: 10401, //参数信息错误
         OPERATE_ERR: 10406, //操作失败
     },
+    LEAVE: {
+        GET_LEAVE_ERR: 10501, //获取审批列表失败
+    },
     TOKEN_ERR: 50001,
     PARAMS_LACK: 40001, //缺少参数
 };

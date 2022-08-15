@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-orderNo;
 // 菜单字段定义
-const menuSchema = new Schema({
+const leaveSchema = new Schema({
     orderNo: String, // 申请单号
     applyType: {
         //申请类型  1:事假 2：调休 3:年假
@@ -43,4 +42,4 @@ const menuSchema = new Schema({
     },
 }, { timestamps: true }, { versionKey: false });
 
-module.exports = mongoose.model("menu", menuSchema, "menus");
+module.exports = mongoose.model("leave", leaveSchema, "leaves");

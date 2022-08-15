@@ -25,16 +25,16 @@
 
         <div class="table-base">
             <div class="action">
-                <el-button type="primary" @click="handleAdd">创建</el-button>
-                <el-button type="danger" @click="batchDel">批量删除</el-button>
+                <el-button type="primary" @click="handleAdd" v-has="'user-add'">创建</el-button>
+                <el-button type="danger" @click="batchDel" v-has="'user-delete'">批量删除</el-button>
             </div>
             <el-table :data="userList" @selection-change="selectionChange">
                 <el-table-column type="selection" width="55" />
                 <el-table-column v-for="item of columns" v-bind="item"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
-                        <el-button @click="handleEdit(row)">编辑</el-button>
-                        <el-button type="danger" @click=delUser([row.userId])>删除</el-button>
+                        <el-button @click="handleEdit(row)" v-has="'user-edit'">编辑</el-button>
+                        <el-button type="danger" @click=delUser([row.userId]) v-has="'user-delete'">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -62,6 +62,12 @@
                 <el-form-item label="岗位" prop="job">
                     <el-input v-model="userForm.job" placeholder="岗位"></el-input>
                 </el-form-item>
+                <el-form-item label="角色类型" prop="role">
+                    <el-select v-model="userForm.role">
+                        <el-option label="管理员" :value="0"></el-option>
+                        <el-option label="普通用户" :value="1"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="状态" prop="state">
                     <el-select v-model="userForm.state">
                         <el-option label="在职" :value="1"></el-option>
@@ -84,7 +90,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="handleClose">取消</el-button>
-                    <el-button type="primary" @click="handleSubmit">确定</el-button>
+                    <el-button type="primary" @click="handleSubmit" v-has="'user-add'">确定</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -106,7 +112,8 @@ export default {
                 state: 1
             },
             userForm: {
-                state: 3
+                state: 3,
+                role: 1 //默认为普通用户
             },
             userRules: { //校验规则
                 userName: [

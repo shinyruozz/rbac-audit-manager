@@ -9,5 +9,6 @@ router.post("/operate", user.operate);
 router.post("/delete", user.delete);
 router.get("/all/list", user.allList);
 router.post("/list", user.userList);
+router.get("/permission", user.permission);
 
 module.exports = router;

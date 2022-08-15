@@ -7,22 +7,22 @@
       <bread-crumb></bread-crumb>
     </div>
     <div class="user-info">
-      <el-badge :value="12" is-dot type="danger">
+      <el-badge :is-dot="auditCount" type="danger" @click="handleToApprove">
         <el-icon :size="20">
           <Bell></Bell>
         </el-icon>
       </el-badge>
       <el-dropdown>
         <span class="el-dropdown-link">
-          {{userInfo.userName}}
+          {{ userInfo.userName }}
           <el-icon class="el-icon--right">
             <arrow-down />
           </el-icon>
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>邮箱：{{userInfo.userEmail}}</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item>邮箱：{{ userInfo.userEmail }}</el-dropdown-item>
+            <el-dropdown-item @click="signOut">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -32,6 +32,7 @@
 
 <script>
 import BreadCrumb from "./BreadCrumb/index.vue";
+import { mapState } from 'vuex'
 export default {
   name: "NavTop",
   components: {
@@ -43,10 +44,22 @@ export default {
     };
   },
   methods: {
-    handleFold(){
+    handleFold() {
       this.$emit('fold')
+    },
+    signOut() {
+      this.$router.push('/login')
+      this.$storage.clearStorage();
+    },
+    handleToApprove() {
+      if (!this.auditCount) return;
+      this.$router.push('/audit/approve')
     }
   },
+
+  computed: {
+    ...mapState(['auditCount'])
+  }
 };
 </script>
 

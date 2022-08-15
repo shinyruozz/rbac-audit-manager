@@ -14,16 +14,16 @@
 
         <div class="table-base">
             <div class="action">
-                <el-button type="primary" @click="handleAdd">新增</el-button>
+                <el-button type="primary" @click="handleAdd" v-has="'role-add'">新增</el-button>
             </div>
             <el-table :data="roleList">
                 <el-table-column v-for="item of columns" v-bind="item"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
-                        <el-button @click="handleSetPermission(row)" type="primary">设置权限
+                        <el-button @click="handleSetPermission(row)" type="primary" v-has="'role-permission'">设置权限
                         </el-button>
-                        <el-button @click="handleEdit(row)">编辑</el-button>
-                        <el-button type="danger" @click=delRole(row._id)>删除</el-button>
+                        <el-button @click="handleEdit(row)" v-has="'role-edit'">编辑</el-button>
+                        <el-button type="danger" @click=delRole(row._id) v-has="'role-delete'">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -47,7 +47,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="handleClose">取消</el-button>
-                    <el-button type="primary" @click="handleSubmit">确定</el-button>
+                    <el-button type="primary" @click="handleSubmit" v-has="'role-edit'">确定</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -120,10 +120,11 @@ export default {
                     label: '权限列表',
                     property: "permissionList",
                     formatter: (row, column, value) => {
-                        return value.halfCheckedKeys.map((_id, i) => {
+                        let arr = value.halfCheckedKeys.map((_id, i) => {
                             let menu = this.menuMap.find(item => item._id == _id) || {};
                             return menu.menuName
-                        }).join(',')
+                        }).filter(item => item)
+                        return arr.length > 0 ? arr.join(',') : '暂无'
                     }
 
                 },

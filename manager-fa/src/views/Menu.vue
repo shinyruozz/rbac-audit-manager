@@ -1,5 +1,5 @@
 <template>
-    <div class='content-wrapper'>
+    <div class='content-wrapper' @keyup.enter="handleSubmit">
         <div class="query-form">
             <el-form :model="queryForm" ref="queryForm" :inline="true">
                 <el-form-item label="菜单名称" prop="menuName">
@@ -12,8 +12,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="getMenuList">查询</el-button>
-                    <el-button @click="handleReset('queryForm')">重置</el-button>
+                    <el-button type="primary" @click="getMenuList" v-has="'menu-query'">查询</el-button>
+                    <el-button @click="handleReset('queryForm')" v-has="'menu-query'">重置</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -26,10 +26,11 @@
                 <el-table-column v-for="item of columns" v-bind="item"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
-                        <el-button @click="handleAdd(2, row)" type="primary" :disabled="row.menuType == 2">新增
+                        <el-button @click="handleAdd(2, row)" type="primary" :disabled="row.menuType == 2"
+                            v-has="'menu-add'">新增
                         </el-button>
-                        <el-button @click="handleEdit(row)">编辑</el-button>
-                        <el-button type="danger" @click=delMenu(row._id)>删除</el-button>
+                        <el-button @click="handleEdit(row)" v-has="'menu-edit'">编辑</el-button>
+                        <el-button type="danger" @click=delMenu(row._id) v-has="'menu-delete'">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -219,7 +220,9 @@ export default {
                         action: this.action
                     });
                     this.$message.success(`${this.action == 'add' ? '新增' : '修改'}成功`);
-                    this.modalShow = false;
+
+                    this.handleClose();
+                    this.menuForm.menuCode = ''
                     this.getMenuList()
                 }
             })

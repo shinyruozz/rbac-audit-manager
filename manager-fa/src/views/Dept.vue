@@ -6,22 +6,22 @@
                     <el-input v-model.trim="queryForm.deptName" placeholder="部门名称"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="getDeptList">查询</el-button>
-                    <el-button @click="handleReset('queryForm')">重置</el-button>
+                    <el-button type="primary" @click="getDeptList" v-has="'dept-query'">查询</el-button>
+                    <el-button @click="handleReset('queryForm')" v-has="'dept-query'">重置</el-button>
                 </el-form-item>
             </el-form>
         </div>
 
         <div class="table-base">
             <div class="action">
-                <el-button type="primary" @click="handleAdd()">新增</el-button>
+                <el-button type="primary" @click="handleAdd()" v-has="'dept-add'">新增</el-button>
             </div>
             <el-table :data="deptList" row-key="_id" :tree-props="{ children: 'children' }">
                 <el-table-column v-for="item of columns" v-bind="item"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template #default="{ row }">
-                        <el-button @click="handleEdit(row)">编辑</el-button>
-                        <el-button type="danger" @click=deldept(row._id)>删除</el-button>
+                        <el-button @click="handleEdit(row)" v-has="'dept-edit'">编辑</el-button>
+                        <el-button type="danger" @click=deldept(row._id) v-has="'dept-delete'">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -172,8 +172,9 @@ export default {
         },
         //获取部门列表
         async getDeptList() {
+
             const list = await this.$api.getDeptList(this.queryForm);
-            console.log(list);
+            console.log('获取dept');
             this.deptList = list
         },
 

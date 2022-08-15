@@ -1,16 +1,22 @@
 import axios from "axios";
-import router from "../router";
+import { router } from "../router";
 import config from "../config/index";
 import CODE_INFO from "../config/code";
 import storage from "./storage";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElLoading } from "element-plus";
 
+let loading;
 const http = axios.create({
     baseURL: config.baseApi,
     timeout: 8000,
 });
 //请求额拦截
 http.interceptors.request.use((req) => {
+    loading = ElLoading.service({
+        lock: true,
+        text: "加载中...",
+        background: "rgba(0, 0, 0, .1)",
+    });
     const auth = req.headers.Authorization;
     //添加token
     if (!auth) {
@@ -22,13 +28,16 @@ http.interceptors.request.use((req) => {
 //响应拦截
 http.interceptors.response.use((res) => {
     const { code, data, msg } = res.data;
+    setTimeout(() => {
+        loading.close();
+    }, 300);
     if (code == 200) {
         return data;
     } else if (code == 50001) {
         ElMessage.error(CODE_INFO.TOKEN_ERR);
         setTimeout(() => {
             router.push("/login");
-        }, 1000);
+        }, 500);
         return Promise.reject(CODE_INFO.TOKEN_ERR);
     } else {
         ElMessage.error(msg || CODE_INFO.NETWORK_ERR);

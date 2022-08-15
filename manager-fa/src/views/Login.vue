@@ -20,6 +20,7 @@
 
 <script>
 import Api from "@/api/index";
+import { syncLoadRoutes } from '../router/index.js'
 export default {
   name: "Login",
   data() {
@@ -60,13 +61,17 @@ export default {
 
   methods: {
     handleSubmit() {
-      this.$refs.userForm.validate((valid) => {
+      this.$refs.userForm.validate(async (valid) => {
         if (valid) {
-          this.$api.login({ data: this.loginForm }).then((res) => {
+          try {
+            const userInfo = await this.$api.login({ data: this.loginForm })
             this.$router.push("/");
             this.$message.success('登录成功')
-            this.$storage.setStorage('userInfo', res)
-          });
+            this.$store.commit('saveUserInfo', userInfo)
+            await syncLoadRoutes()
+          } catch (error) {
+            this.$message.error('网络走丢了')
+          }
         }
       });
     },
