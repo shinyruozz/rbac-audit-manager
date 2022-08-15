@@ -6,7 +6,6 @@ const tools = require("../utils/tools");
 async function verityParams(ctx, next) {
     try {
         const { userName, userPwd } = ctx.request.body;
-        console.log(userName, userPwd);
         if (!userName || !userPwd) {
             return (ctx.body = tools.fail(CODE.PARAMS_LACK, "缺少参数"));
         }

@@ -32,9 +32,8 @@ class Menu {
             info = "编辑成功";
         } else if (action == "delete") {
             res = await MenuModel.findByIdAndDelete(_id);
-            //同事删除子项目
-            let s = await MenuModel.deleteMany({ parentId: { $all: [_id] } });
-            console.log(s);
+            //同时删除子项
+            await MenuModel.deleteMany({ parentId: { $all: [_id] } });
             info = "删除成功";
         } else {
             ctx.body = tools.fail(CODE.MENU.VERITY_PARMS_ERR);

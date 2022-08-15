@@ -60,7 +60,6 @@ export default {
     },
     handleFold() {
       this.isFold = !this.isFold
-      console.log(this.isFold);
     },
     //获取当前账号需要审批的数量
     async getAuditCount() {

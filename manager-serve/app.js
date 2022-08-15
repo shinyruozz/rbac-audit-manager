@@ -38,7 +38,6 @@ app.use(async(ctx, next) => {
     await next().catch((err) => {
         //token认证失败
         if (err.status == "401") {
-            console.log(err);
             ctx.status = 200;
             ctx.body = {
                 code: CODE.TOKEN_ERR,

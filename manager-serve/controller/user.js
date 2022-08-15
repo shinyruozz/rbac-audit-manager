@@ -136,7 +136,6 @@ class User {
                 //用户是管理员
                 menuList = await MenuModel.find();
                 menuList = tools.getTreeMenu(menuList.slice());
-                console.log(menuList);
                 action = tools.getAction(JSON.parse(JSON.stringify(menuList)));
             } else {
                 // 普通用户

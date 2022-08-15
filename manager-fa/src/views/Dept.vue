@@ -172,9 +172,7 @@ export default {
         },
         //获取部门列表
         async getDeptList() {
-
             const list = await this.$api.getDeptList(this.queryForm);
-            console.log('获取dept');
             this.deptList = list
         },
 

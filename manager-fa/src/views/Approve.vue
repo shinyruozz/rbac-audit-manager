@@ -183,7 +183,6 @@ const handleApprove = async (action, _id) => {
         remark: leaveDetail.value.remark
     });
 
-    console.log(res);
     detailShow.value = false
     getLeaveList()
 }
@@ -210,7 +209,6 @@ const handleAudit = (row) => {
 //弹框关闭
 const handleClose = (form) => {
     detailShow.value = false;
-    console.log(1);
     handleReset(form)
 }
 

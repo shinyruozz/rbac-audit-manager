@@ -257,8 +257,6 @@ export default {
             let menuList = await this.$api.getAllMenuList();
             this.menuMap = menuList;
             this.menuList = tools.setMenuTree(menuList);
-            console.log(this.menuList);
-
         }
     },
 }
