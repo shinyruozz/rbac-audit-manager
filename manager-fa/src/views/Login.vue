@@ -27,8 +27,7 @@ export default {
     return {
       loginForm: {
 
-        userName: "dasi22",
-        userPwd: "123456",
+
       },
       rules: {
         userName: [
@@ -70,7 +69,7 @@ export default {
             this.$store.commit('saveUserInfo', userInfo)
             await syncLoadRoutes()
           } catch (error) {
-            this.$message.error('网络走丢了')
+            // this.$message.error('网络走丢了')
           }
         }
       });

@@ -184,6 +184,7 @@ const handleApprove = async (action, _id) => {
     });
 
     detailShow.value = false
+    getAuditCount()
     getLeaveList()
 }
 //获取审批数据
@@ -191,6 +192,11 @@ const getLeaveList = async () => {
     const { list, page } = await $api.getLeaveList({ ...queryForm, action: 'approve', ...pager });
     applyList.value = list;
     pager.total = page.total
+}
+
+const getAuditCount = async () => {
+    const count = await $api.auditCount();
+    store.commit('saveAuditCount', count)
 }
 //重置表单
 const handleReset = (form) => {

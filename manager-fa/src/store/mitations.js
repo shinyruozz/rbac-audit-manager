@@ -15,4 +15,9 @@ export default {
         store.menuList = MenuList;
         storage.setStorage("menuList", MenuList);
     },
+    removeMenu(store) {
+        store.menuList = [];
+        store.actionList = [];
+        storage.clearStorage();
+    },
 };

@@ -184,17 +184,19 @@ class User {
                     return cuIdx == index;
                 });
                 menuList = tools.getTreeMenu(menuList);
-                action = action.filter((menuItem, index, arr) => {
-                    let cuIdx = arr.findIndex((item) => {
-                        return String(menuItem._id) == String(item._id);
-                    });
-                    return cuIdx == index;
-                });
+                action = action
+                    .filter((menuItem, index, arr) => {
+                        let cuIdx = arr.findIndex((item) => {
+                            return String(menuItem._id) == String(item._id);
+                        });
+                        return cuIdx == index;
+                    })
+                    .map((item) => item.menuCode);
             }
             info = "获取菜单列表成功";
             ctx.body = tools.success({
                     menuList,
-                    action,
+                    action, //格式为['user-add','user-delete'.....]
                 },
                 info
             );

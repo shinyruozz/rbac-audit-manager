@@ -9,7 +9,9 @@ function vHas(app) {
         beforeMount: function(el, binding) {
             let actionList = store.state.actionList,
                 value = binding.value;
+
             const isHas = actionList.includes(value); //判断是否该按钮权限存在
+
             if (!isHas) {
                 //没有该权限
                 el.style = "display:none"; //先隐藏起来

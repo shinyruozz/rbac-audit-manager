@@ -129,7 +129,6 @@ async function syncLoadRoutes() {
         const { menuList, action } = await $api.getUserPermission();
         store.commit("saveActionList", action);
         store.commit("saveMenuList", menuList);
-
         generateRotes(menuList, router);
         // router.addRoute("system", {
         //     name: "welcome",
@@ -150,8 +149,9 @@ async function syncLoadRoutes() {
             if (menuItem.parentId && menuItem.parentId.length == 0) {
                 router.addRoute({
                     name: routeName,
-                    component: () =>
-                        import (url),
+                    component: () => {
+                        return import (url);
+                    },
                     path: menuItem.path,
                     meta: {
                         title: "首页",
@@ -161,8 +161,9 @@ async function syncLoadRoutes() {
                 let pRoute = menuItem.path.match(/\/(.+?)\//)[1];
                 router.addRoute(pRoute, {
                     name: routeName,
-                    component: () =>
-                        import (url),
+                    component: () => {
+                        return import (url);
+                    },
                     path: menuItem.path,
                     meta: {
                         title: menuItem.menuName,

@@ -71,7 +71,7 @@
 <script>
 import tools from '../utils/tools.js';
 export default {
-    name: '',
+    name: 'Role',
 
     data() {
         return {

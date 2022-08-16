@@ -60,7 +60,7 @@
 <script>
 import tools from '../utils/tools.js';
 export default {
-    name: '',
+    name: 'Dept',
     components: {
 
     },

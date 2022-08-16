@@ -29,11 +29,13 @@
 <script>
 import MenuTree from '../components/MenuTree/index.vue'
 import NavTop from '../components/NavTop/index.vue';
+import { ref } from 'vue';
+import { useStore } from 'vuex'
 export default {
   name: "Home",
+
   data() {
     return {
-      menuList: [],
       isFold: false, //是否折叠
       menuList: this.$store.state.menuList
     };
@@ -49,8 +51,9 @@ export default {
     NavTop
   },
   mounted() {
-    this.getAuditCount()
-
+    console.log(1);
+    this.getAuditCount();
+    this.getMenuList()
   },
   methods: {
     //获取登录进来用户对应的权限列表 // 管理员默认 全部 普通用户根据分配的角色 获得对应的权限
@@ -65,7 +68,17 @@ export default {
     async getAuditCount() {
       const count = await this.$api.auditCount();
       this.$store.commit('saveAuditCount', count)
-    }
+    },
+    async getMenuList() {
+      try {
+        const { menuList, action } = await this.$api.getUserPermission();
+        this.$store.commit("saveMenuList", menuList);
+        this.$store.commit("saveActionList", action);
+        this.menuList = menuList;
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
 };
 </script>

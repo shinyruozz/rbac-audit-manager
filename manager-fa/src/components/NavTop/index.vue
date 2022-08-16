@@ -7,7 +7,7 @@
       <bread-crumb></bread-crumb>
     </div>
     <div class="user-info">
-      <el-badge :is-dot="auditCount" type="danger" @click="handleToApprove">
+      <el-badge :is-dot="auditCount > 0" type="danger" @click="handleToApprove">
         <el-icon :size="20">
           <Bell></Bell>
         </el-icon>
@@ -50,6 +50,7 @@ export default {
     signOut() {
       this.$router.push('/login')
       this.$storage.clearStorage();
+      // this.$store.commit('removeMenu')
     },
     handleToApprove() {
       if (!this.auditCount) return;
